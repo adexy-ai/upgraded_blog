@@ -3,12 +3,12 @@ import requests
 
 app = Flask('__main__')
 
+res = requests.get('https://api.npoint.io/0474556ce29410042eca')
+res.raise_for_status
+data = res.json()
 
 @app.route('/')
 def index():
-    res = requests.get('https://api.npoint.io/0474556ce29410042eca')
-    res.raise_for_status
-    data = res.json()
     return render_template('index.html', posts= data)
 
 
@@ -21,7 +21,13 @@ def contact():
     return render_template('contact.html')
 
 
-
+@app.route('/post/<int:index>')
+def show_post(index):
+    requested_post = None
+    for blog_post in data:
+        if blog_post["id"] == index:
+            requested_post = blog_post
+    return render_template("post.html", post=requested_post)
 
 
     
