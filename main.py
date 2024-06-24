@@ -21,7 +21,7 @@ def contact():
     return render_template('contact.html')
 
 
-@app.route('/post/<int:index>')
+@app.route('/<int:index>')
 def show_post(index):
     requested_post = None
     for blog_post in data:
@@ -34,5 +34,5 @@ def show_post(index):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5001)
   
