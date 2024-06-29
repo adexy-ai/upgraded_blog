@@ -1,5 +1,9 @@
-from flask import Flask, render_template, url_for, redirect
+from flask import Flask, render_template, request
 import requests
+import smtplib
+
+MY_GMAIL = "adex.dbaba@gmail.com"
+MY_PASSWORD = "fhgvciamnejldnvo"
 
 app = Flask('__main__')
 
@@ -16,9 +20,20 @@ def index():
 def about():
     return render_template('about.html')
 
-@app.route('/contact')
+@app.route("/contact", methods=["GET", "POST"])
 def contact():
-    return render_template('contact.html')
+    if request.method == "POST":
+        data = request.form
+        send_email(data["name"], data["email"], data["phone"], data["message"])
+        return render_template("contact.html", msg_sent=True)
+    return render_template("contact.html", msg_sent=False)
+
+def send_email(name, email, phone, message):
+    email_message = f"Subject:New Message\n\nName: {name}\nEmail: {email}\nPhone: {phone}\nMessage:{message}"
+    with smtplib.SMTP("smtp.gmail.com") as connection:
+        connection.starttls()
+        connection.login(MY_GMAIL, MY_PASSWORD)
+        connection.sendmail(MY_GMAIL, MY_GMAIL, email_message)
 
 
 @app.route('/<int:index>')
@@ -28,6 +43,9 @@ def show_post(index):
         if blog_post["id"] == index:
             requested_post = blog_post
     return render_template("post.html", post=requested_post)
+
+
+
 
 
     
